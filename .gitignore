@@ -6,7 +6,9 @@
 /**/.DS_Store
 /**/.idea/
 /**/.vscode/
+/**/.pytest_cache
 
 # Python (CPython) caches
 /**/*.pyc
 /**/__pycache__/
+

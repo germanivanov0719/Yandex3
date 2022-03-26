@@ -1,9 +1,10 @@
-import datetime
-import sqlalchemy
-from sqlalchemy import orm
+import datetime as dt
+
+from flask_login import UserMixin
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, orm
 from sqlalchemy_serializer import SerializerMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
+
 
 from .db_session import SqlAlchemyBase
 
@@ -11,19 +12,13 @@ from .db_session import SqlAlchemyBase
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = "users"
 
-    username = sqlalchemy.Column(sqlalchemy.String, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    email = sqlalchemy.Column(
-        sqlalchemy.String, index=True, unique=True, nullable=True
-    )
-    hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    created_datetime = sqlalchemy.Column(
-        sqlalchemy.DateTime, default=datetime.datetime.now
-    )
-    controlled_place_id = sqlalchemy.Column(
-        sqlalchemy.Integer, sqlalchemy.ForeignKey("places.id")
-    )
+    username = Column(String, primary_key=True)
+    name = Column(String, nullable=True)
+    about = Column(String, nullable=True)
+    email = Column(String, index=True, unique=True, nullable=True)
+    hashed_password = Column(String, nullable=True)
+    created_datetime = Column(DateTime, default=dt.datetime.now)
+    controlled_place_id = Column(Integer, ForeignKey("places.id"))
 
     controlled_place = orm.relationship(
         "Place", back_populates="controlling_users"

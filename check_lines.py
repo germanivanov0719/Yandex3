@@ -1,8 +1,7 @@
 #! python3
 
 # How to use:
-# ./check-lines.py ./main.py ./data/**/*.py ./db/**/*.py
-# ./forms/**/*.py ./templates/**/*.py ./static/**/*.py
+# ./check_lines.py ./main.py ./data/**/*.py
 
 import sys
 

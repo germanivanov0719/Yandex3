@@ -1,3 +1,7 @@
+# Remove when in production
+import datetime
+import os
+
 from data import db_session
 from data.places import Place
 from data.users import User
@@ -6,19 +10,13 @@ from data.events import Event
 
 
 def clear_db():
-    # Remove when in production
-    import os
-
     try:
         os.remove("db/db.sqlite")
     except Exception:
-        pass
+        print("Error testing database")
 
 
 def test_db():
-    # Remove when in production
-    import datetime
-
     db_sess = db_session.create_session()
 
     # User
@@ -46,12 +44,7 @@ def test_db():
         place=place,
     )
     # Order
-    # user = db_sess.query(User).first()
-    # place = (
-    #     db_sess.query(Place)
-    #     .filter(Place.id == user.controlled_place_id)
-    #     .first()
-    # )
     order = Order(event=event, owner=user)
+    db_sess.add(order)
     # Commit
     db_sess.commit()
