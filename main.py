@@ -9,18 +9,19 @@ from flask_login import (
     logout_user,
 )
 
-import db_tests
+import tests.db_tests as db_tests
 from data import db_session
-from data.events import Event
-from data.orders import Order
-from data.places import Place
-from data.users import User
+import data.__all_models
+
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.urandom(12).hex()
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+
+import app_routes
 
 
 def main():
@@ -34,13 +35,6 @@ def main():
 def load_user(username):
     db_sess = db_session.create_session()
     return db_sess.query(User).get(username)
-
-
-@app.route("/")
-@app.route("/index")
-@app.route("/index.html")
-def index():
-    return render_template("index.html")
 
 
 if __name__ == "__main__":
