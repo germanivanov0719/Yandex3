@@ -12,3 +12,6 @@
 /**/*.pyc
 /**/__pycache__/
 
+# Databases, and other local resources
+/db/db.sqlite
+
