@@ -7,7 +7,7 @@ from flask_login import (
     logout_user,
 )
 
-from __main__ import app
+from main import app
 
 
 @app.route("/")

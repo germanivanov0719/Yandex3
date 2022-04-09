@@ -17,6 +17,8 @@ def clear_db():
 
 
 def test_db():
+    clear_db()
+    db_session.global_init("db/db.sqlite")
     db_sess = db_session.create_session()
     assert db_sess
     # User
@@ -45,7 +47,7 @@ def test_db():
         datetime=datetime.datetime.now(),
         place=place,
     )
-    assert event
+    assert event != 0
     # Order
     order = Order(event=event, owner=user)
     assert order
@@ -53,3 +55,7 @@ def test_db():
     # Commit
     db_sess.commit()
     assert db_sess
+
+
+if __name__ == "__main__":
+    test_db()
