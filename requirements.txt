@@ -1,3 +1,3 @@
+flask==2.0.3
 flask-wft
 sqlalchemy
-flask==2.0.3
