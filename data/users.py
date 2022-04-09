@@ -6,16 +6,16 @@ from sqlalchemy_serializer import SerializerMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-from .db_session import SqlAlchemyBase
+from data.db_session import SqlAlchemyBase
 
 
 class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = "users"
 
-    username = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=True)
     about = Column(String, nullable=True)
-    email = Column(String, index=True, unique=True, nullable=True)
+    email = Column(String, index=True, unique=True)
     hashed_password = Column(String, nullable=True)
     created_datetime = Column(DateTime, default=dt.datetime.now)
     controlled_place_id = Column(Integer, ForeignKey("places.id"))
@@ -26,10 +26,14 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     orders = orm.relationship("Order")
 
     def __repr__(self):
-        return f"<User> {self.username}: {self.name}, {self.email}"
+        return f"<User> {self.email}: {self.name}, {self.id}"
 
     def set_password(self, password):
-        self.hashed_password = generate_password_hash(password)
+        self.hashed_password = generate_password_hash(
+            str(password) + str(self.email)
+        )
 
     def check_password(self, password):
-        return check_password_hash(self.hashed_password, password)
+        return check_password_hash(
+            self.hashed_password, str(password) + str(self.email)
+        )
