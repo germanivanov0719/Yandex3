@@ -11,7 +11,10 @@ from flask_login import (
 
 import tests.db_tests as db_tests
 from data import db_session
-import data.__all_models
+from data.users import User
+from data.orders import Order
+from data.places import Place
+from data.events import Event
 
 
 app = Flask(__name__)

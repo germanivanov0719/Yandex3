@@ -3,6 +3,7 @@ import datetime
 import os
 
 from data import db_session
+
 from data.places import Place
 from data.users import User
 from data.orders import Order
