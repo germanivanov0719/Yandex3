@@ -1,3 +1,5 @@
-flask-wft==1.0.0
-sqlalchemy==1.4.32
 flask==2.0.3
+Flask-WTF
+sqlalchemy
+flask_login
+SQLAlchemy-serializer

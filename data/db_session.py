@@ -1,9 +1,10 @@
 import sqlalchemy as sa
+import sqlalchemy.ext.declarative as dec
 import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session
-import sqlalchemy.ext.declarative as dec
 
 SqlAlchemyBase = dec.declarative_base()
+from data import __all_models
 
 __factory = None
 
@@ -12,7 +13,7 @@ def global_init(db_file):
     global __factory
 
     if __factory:
-        return
+        return None
 
     if not db_file or not db_file.strip():
         raise Exception("Необходимо указать файл базы данных.")
@@ -22,9 +23,6 @@ def global_init(db_file):
 
     engine = sa.create_engine(conn_str, echo=False)
     __factory = orm.sessionmaker(bind=engine)
-
-    # noinspection PyUnresolvedReference
-    from data import __all_models
 
     SqlAlchemyBase.metadata.create_all(engine)  # type: ignore
 

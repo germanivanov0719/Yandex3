@@ -9,9 +9,11 @@ from flask_login import (
     logout_user,
 )
 
-import tests.db_tests as db_tests
 from data import db_session
-import data.__all_models
+from data.users import User
+from data.orders import Order
+from data.places import Place
+from data.events import Event
 
 
 app = Flask(__name__)
@@ -25,9 +27,7 @@ import app_routes
 
 
 def main():
-    db_tests.clear_db()
     db_session.global_init("db/db.sqlite")
-    db_tests.test_db()
     app.run(port=8000, host="127.0.0.1")
 
 
