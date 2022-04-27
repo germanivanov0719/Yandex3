@@ -125,6 +125,9 @@ def edit_profile(id):
     user.about = request.form.get("about")
     user.hashed_password = request.form.get("new_password")
     user.email = request.form.get("email")
+    if user.email in db_sess.query(User.email).all():
+        # error warning
+        pass
     db_sess.commit()
     # return render_template("profile_edit.html", user=user)
 
