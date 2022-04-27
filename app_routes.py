@@ -10,6 +10,7 @@ from flask_login import (
 
 from data import db_session
 from data.users import User
+from data.events import Event
 from forms.login import LoginForm
 from forms.register import RegisterForm
 
@@ -18,7 +19,15 @@ from forms.register import RegisterForm
 @app.route("/index")
 @app.route("/index.html")
 def index():
-    return render_template("index.html")
+    db_sess = db_session.create_session()
+    events = db_sess.query(Event).all()
+    return render_template("index.html", events=events)
+
+
+@app.route("/events")
+@app.route("/events.html")
+def events():
+    return redirect("/")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -73,3 +82,9 @@ def reqister():
 def logout():
     logout_user()
     return redirect("/")
+
+
+@app.route("/places")
+@app.route("/places.html")
+def places():
+    return render_template("places.html", title="")

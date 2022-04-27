@@ -1,0 +1,17 @@
+/* .normalize-link {
+    text-decoration: none;
+    color: black;
+
+}
+
+.navbar {
+    padding-left: 10px;
+    padding-right: 10px;
+} */
+
+.card {
+    width: auto;
+    min-width: max-content;
+    height: 100%;
+    /* max-width: 30rem; */
+}
