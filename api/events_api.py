@@ -20,10 +20,10 @@ def get_events():
     )
 
 
-@blueprint.route("/api/jobs/<int:events_id>", methods=["GET"])
-def get_one_place(jobs_id):
+@blueprint.route("/api/events/<int:event_id>", methods=["GET"])
+def get_one_place(event_id):
     db_sess = db_session.create_session()
-    events = db_sess.query(Event).get(jobs_id)
+    events = db_sess.query(Event).get(event_id)
     if not events:
         return jsonify({"error": "Not found"})
     return jsonify(
