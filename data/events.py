@@ -14,7 +14,7 @@ class Event(SqlAlchemyBase, UserMixin, SerializerMixin):
     name = Column(String, nullable=True)
     description = Column(String, nullable=True)
     created_datetime = Column(DateTime, default=dt.datetime.now)
-    datetime = Column(DateTime)
+    datetime = Column(DateTime, default=dt.datetime.now)
     place_id = Column(Integer, ForeignKey("places.id"))
     required_age = Column(Integer, default=14)
     notes = Column(String, nullable=True)

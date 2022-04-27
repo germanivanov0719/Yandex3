@@ -1,7 +1,15 @@
 import datetime as dt
 
 from flask_login import UserMixin
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, orm
+from sqlalchemy import (
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    orm,
+    Boolean,
+)
 from sqlalchemy_serializer import SerializerMixin
 
 from data.db_session import SqlAlchemyBase
@@ -15,6 +23,7 @@ class Order(SqlAlchemyBase, UserMixin, SerializerMixin):
     created_datetime = Column(DateTime, default=dt.datetime.now)
     owner_email = Column(Integer, ForeignKey("users.email"))
     event_id = Column(Integer, ForeignKey("events.id"))
+    is_fulfilled = Column(Boolean, default=False)
     event = orm.relationship("Event", back_populates="orders")
     owner = orm.relationship("User", back_populates="orders")
 

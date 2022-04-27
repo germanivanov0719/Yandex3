@@ -1,5 +1,5 @@
 from __main__ import app  # pylint: disable=E0611
-from flask import redirect, render_template
+from flask import redirect, render_template, make_response, jsonify
 from flask_login import (
     LoginManager,
     current_user,
@@ -10,6 +10,7 @@ from flask_login import (
 
 from data import db_session
 from data.users import User
+from data.places import Place
 from data.events import Event
 from forms.login import LoginForm
 from forms.register import RegisterForm
@@ -21,7 +22,7 @@ from forms.register import RegisterForm
 def index():
     db_sess = db_session.create_session()
     events = db_sess.query(Event).all()
-    return render_template("index.html", events=events)
+    return render_template("index.html", events=events, active="index")
 
 
 @app.route("/events")
@@ -87,4 +88,29 @@ def logout():
 @app.route("/places")
 @app.route("/places.html")
 def places():
-    return render_template("places.html", title="")
+    db_sess = db_session.create_session()
+    places = db_sess.query(Place).all()
+    return render_template("places.html", places=places, active="places")
+
+
+@app.route("/event/<int:id>")
+def event_info(id):
+    db_sess = db_session.create_session()
+    event = db_sess.query(Event).filter(Event.id == id).first()
+    try:
+        datetime = event.datetime.strftime("%H:%M %d.%m.%y")
+    except:
+        datetime = "время не указано"
+    return render_template("event_info.html", event=event, datetime=datetime)
+
+
+@app.route("/place/<int:id>")
+def place_info(id):
+    db_sess = db_session.create_session()
+    place = db_sess.query(Place).filter(Place.id == id).first()
+    return render_template("place_info.html", place=place)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({"error": "Not found"}), 404)

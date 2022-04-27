@@ -1,4 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-  <!-- TODO: something like index.html but for places list -->
-{% endblock %}>
+  <h2 class="text-center">Места</h2>
+  <div class="container-fluid">
+    <div class="row">
+      {%for place in places%}
+        <div class="col my-2">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{place.name}}</h5>
+              <a class="card-link card-subtitle text-muted s">{{place.address}}</a>
+            </div>
+            <div class="card-body">
+              <a class="btn btn-outline-primary" href="/place/{{place.id}}">Информация</a>
+              {%if current_user.is_authenticated and current_user.controlled_place == place%}
+                <a class="btn btn-outline-secondary" href="/place/{{place.id}}/create-event">Создать мероприятие</a>
+                {%endif%}
+                <!-- <a class="btn btn-outline-secondary" href="/place/{{place.id}}">Заказы</a> -->
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endblock %}>

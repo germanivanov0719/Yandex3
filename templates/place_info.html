@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 class="text-center">{{place.name}}</h2>
+  <h5 class="text-center text-muted">{{place.address}}</h3>
+  <p>{{place.about or 'Описание отсутствует'}}</p>
+  <h5 class="text-center text-muted">Мероприятия</h5>
+  <div class="container-fluid">
+    <div class="row">
+      {%for event in place.events%}
+        <div class="col my-2">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{event.name}}</h5>
+              <a class="card-link card-subtitle text-muted s">{{event.place.name}}</a>
+            </div>
+            <div class="card-body">
+              <a class="btn btn-outline-primary" href="/event/{{event.id}}">Информация</a>
+              <a class="btn btn-outline-secondary" href="/buy/event/{{event.id}}">Купить билет</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  {%if current_user.is_authenticated and current_user.controlled_place == place%}
+    <!-- <div class="container-fluid"> <div class="row"> {%for order in place.orders%} <div class="col my-2"> <div class="card"> <div class="card-body"> <h5 class="card-title">{{event.name}}</h5> <a class="card-link card-subtitle text-muted s">{{event.place.name}}</a> </div> <div class="card-body"> <a class="btn btn-outline-primary" href="/event/{{event.id}}">Информация</a> <a class="btn btn-outline-secondary" href="/buy/event/{{event.id}}">Купить билет</a> </div> </div> </div> {% endfor %} </div> </div> -->
+    {%endif%}
+  {% endblock %}>

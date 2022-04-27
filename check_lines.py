@@ -1,7 +1,7 @@
 #! python3
 
 # How to use:
-# ./check_lines.py ./main.py ./data/**/*.py
+# ./check_lines.py ./main.py ./data/**/*.py ./api/**/*.py ./templates/* ./wsgi.py ./test_db.py
 
 import sys
 
