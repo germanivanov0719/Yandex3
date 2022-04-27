@@ -10,16 +10,19 @@
               <h5 class="card-title">{{event.name}}</h5>
               <a class="card-link card-subtitle text-muted s" href="/place/{{event.place.id}}">{{event.place.name}}</a>
               <p class="card-subtitle text-muted s">{{event.datetime.strftime("%d.%m.%y %H:%M") if event.datetime else 'Время не указано'}}</p>
+              <p class="s text-truncate">{{event.about}}</p>
 
             </div>
             <div class="card-body">
               <a class="btn btn-outline-primary" href="/event/{{event.id}}">Информация</a>
-              <a class="btn btn-outline-secondary" href="/buy/event/{{event.id}}">Купить билет</a>
+              {%if current_user.is_authenticated%}
+                <a class="btn btn-outline-secondary" href="/buy/event/{{event.id}}">Купить билет</a>
+                {%endif%}
+              </div>
             </div>
           </div>
-        </div>
-      {% endfor %}
+        {% endfor %}
+      </div>
     </div>
-  </div>
 
-{% endblock %}>
+  {% endblock %}>
