@@ -1,5 +1,5 @@
 from __main__ import app  # pylint: disable=E0611
-from flask import redirect, render_template, make_response, jsonify
+from flask import redirect, render_template, make_response, jsonify, request
 from flask_login import (
     LoginManager,
     current_user,
@@ -110,6 +110,23 @@ def place_info(id):
     place = db_sess.query(Place).filter(Place.id == id).first()
     return render_template("place_info.html", place=place)
 
+@app.route("/profile")
+def profile_info():
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id).first()
+    # return render_template("profile.html", user=user)
+    return render_template("profile.html")
+
+@app.route("/profile/edit/<int:id>", methods=["POST"])
+def edit_profile(id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id).first()
+    user.name = request.form.get("name")
+    user.about = request.form.get("about")
+    user.hashed_password = request.form.get("new_password")
+    user.email = request.form.get("email")
+    db_sess.commit()
+    # return render_template("profile_edit.html", user=user)
 
 @app.errorhandler(404)
 def not_found(error):
