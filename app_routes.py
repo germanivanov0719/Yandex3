@@ -110,8 +110,8 @@ def place_info(id):
     place = db_sess.query(Place).filter(Place.id == id).first()
     return render_template("place_info.html", place=place)
 
-@app.route("/profile")
-def profile_info():
+@app.route("/profile/<int:id>")
+def profile_info(id):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id).first()
     # return render_template("profile.html", user=user)
