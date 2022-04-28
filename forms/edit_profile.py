@@ -10,12 +10,9 @@ from wtforms.validators import DataRequired
 
 
 class EditProfileForm(FlaskForm):
-    name = StringField("Имя", validators=[DataRequired()])
-    email = EmailField("Почта", validators=[DataRequired()])
+    name = StringField("Имя")
+    email = EmailField("Почта")
     about = TextAreaField("О себе")
-    password = PasswordField("Пароль", validators=[DataRequired()])
-    password_again = PasswordField(
-        "Повторите пароль", validators=[DataRequired()]
-    )
+    password = PasswordField("Пароль")
+    password_again = PasswordField("Повторите пароль")
     submit = SubmitField("Подтвердить изменения")
-

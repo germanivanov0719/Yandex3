@@ -1,4 +1,5 @@
-from __main__ import app, db  # pylint: disable=E0611
+from __main__ import app, db
+from copy import copy  # pylint: disable=E0611
 from flask import redirect, render_template, request
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.exceptions import HTTPException
@@ -106,15 +107,24 @@ def profile_info():
     return render_template("profile.html", user=current_user)
 
 
-@app.route("/edit/<int:id>", methods=["POST", "GET"])
-def edit_profile(id):
+@app.route("/edit", methods=["POST", "GET"])
+def edit_profile():
     form = EditProfileForm()
-    if not current_user:
+    if not current_user.is_authenticated:
         return redirect("/")
+    id = current_user.id
     user = db.query(User).filter(User.id == id).first()
-    old_user = user
+    old_user = copy(user)
     if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
+        if (
+            form.password.data != ""
+            and form.password.data == form.password_again.data
+        ):
+            user.set_password(form.password.data)
+        elif (
+            form.password.data != ""
+            and form.password.data != form.password_again.data
+        ):
             return render_template(
                 "edit_profile.html",
                 title="Изменение профиля",
@@ -122,17 +132,22 @@ def edit_profile(id):
                 message="Пароли не совпадают",
             )
             # if not(db.query(User).filter(current_user.email == form.email.data).first()):
-        if db.query(User).filter(User.email == form.email.data).first():
+        if (
+            form.email.data != ""
+            and user.email != form.email.data
+            and not (
+                db.query(User).filter(User.email == form.email.data).first()
+            )
+        ):
             return render_template(
                 "register.html",
                 title="Изменение профиля",
                 form=form,
-                message="Такой пользователь уже есть",
+                message="Такая почта уже используется",
             )
-        user.name = form.name.data
-        user.email = form.email.data
-        user.about = form.about.data
-        user.hashed_password = form.password.data
+        user.name = form.name.data if form.name.data != "" else user.name
+        user.email = form.email.data if form.email.data != "" else user.email
+        user.about = form.about.data if form.about.data != "" else user.about
         db.delete(old_user)
         db.add(user)
         db.commit()
@@ -140,18 +155,6 @@ def edit_profile(id):
     return render_template(
         "edit_profile.html", title="Изменение профиля", form=form
     )
-    # if not current_user:
-    #     return redirect("/")
-    # user = current_user
-    # user.name = request.form.get("name")
-    # user.about = request.form.get("about")
-    # user.hashed_password = request.form.get("new_pass")
-    # user.email = request.form.get("email")
-    # if user.email in db.query(User.email).all():
-    #     # error warning
-    #     pass
-    # db.commit()
-    # return render_template("profile_edit.html", user=user)
 
 
 @app.route("/buy/event/<int:id>")

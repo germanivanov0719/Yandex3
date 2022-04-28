@@ -21,7 +21,7 @@ class Order(SqlAlchemyBase, UserMixin, SerializerMixin):
     id = Column(Integer, primary_key=True, autoincrement=True)
     description = Column(String, nullable=True)
     created_datetime = Column(DateTime, default=dt.datetime.now)
-    owner_email = Column(Integer, ForeignKey("users.email"))
+    owner_email = Column(Integer, ForeignKey("users.id"))
     event_id = Column(Integer, ForeignKey("events.id"))
     is_fulfilled = Column(Boolean, default=False)
     is_used = Column(Boolean, default=False)
