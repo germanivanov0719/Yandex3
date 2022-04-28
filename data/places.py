@@ -19,7 +19,7 @@ class Place(SqlAlchemyBase, UserMixin, SerializerMixin):
     controlling_users = orm.relationship(
         "User", back_populates="controlled_place"
     )
-    events = orm.relationship("Event")
+    events = orm.relationship("Event", lazy="subquery")
 
     def __repr__(self):
         return f"<Place> {self.id}: {self.name}, {self.address}"

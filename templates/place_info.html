@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
   <h2 class="text-center">{{place.name}}</h2>
-  <h5 class="text-center text-muted">{{place.address}}</h3>
+  <h5 class="text-center text-muted">{{place.address}}</h5>
   <p>{{place.about or 'Описание отсутствует'}}</p>
   <h5 class="text-center text-muted">Мероприятия</h5>
   <div class="container-fluid">
@@ -12,6 +12,7 @@
             <div class="card-body">
               <h5 class="card-title">{{event.name}}</h5>
               <a class="card-link card-subtitle text-muted s">{{event.datetime.strftime("%d.%m.%y %H:%M") if event.datetime else 'Время не указано'}}</a>
+              <p class="s text-truncate" style="max-width: 30ch">{{event.description or '—'}}</p>
             </div>
             <div class="card-body">
               <a class="btn btn-outline-primary" href="/event/{{event.id}}">Информация</a>

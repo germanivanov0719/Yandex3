@@ -29,6 +29,7 @@ def global_init(db_file):
 
 def create_session() -> Session:
     global __factory
+    print("session made")
     if __factory is not None:
         return __factory()
     else:

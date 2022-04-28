@@ -3,7 +3,8 @@
   <h2 class="text-center">{{event.name}}</h2>
   <h5 class="text-center text-muted">{{event.place.name or 'Место не указано'}}
     в
-    {{datetime}}</h3>
-  <p>{{event.about or 'Описание отсутствует'}}</p>
+    {{datetime}}</h5>
+  <p>{{event.description or 'Описание отсутствует'}}</p>
+  <p>{{event.notes or ' '}}</p>
   <a class="btn btn-outline-secondary" href="/buy/event/{{event.id}}">Купить билет</a>
 {% endblock %}>

@@ -1,4 +1,4 @@
-from __main__ import app  # pylint: disable=E0611
+from __main__ import *  # pylint: disable=E0611
 from flask import redirect, render_template, make_response, jsonify
 from flask_login import (
     LoginManager,
@@ -8,8 +8,9 @@ from flask_login import (
     logout_user,
 )
 
-from data import db_session
+# from data import db_session
 from data.users import User
+from data.orders import Order
 from data.places import Place
 from data.events import Event
 from forms.login import LoginForm
@@ -20,8 +21,7 @@ from forms.register import RegisterForm
 @app.route("/index")
 @app.route("/index.html")
 def index():
-    db_sess = db_session.create_session()
-    events = db_sess.query(Event).all()
+    events = db.query(Event).all()
     return render_template("index.html", events=events, active="index")
 
 
@@ -35,11 +35,7 @@ def events():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        db_sess = db_session.create_session()
-        user = (
-            db_sess.query(User).filter(User.email == form.email.data).first()
-        )
-
+        user = db.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
@@ -53,7 +49,6 @@ def login():
 def reqister():
     form = RegisterForm()
     if form.validate_on_submit():
-        db_sess = db_session.create_session()
         if form.password.data != form.password_again.data:
             return render_template(
                 "register.html",
@@ -61,7 +56,7 @@ def reqister():
                 form=form,
                 message="Пароли не совпадают",
             )
-        if db_sess.query(User).filter(User.email == form.email.data).first():
+        if db.query(User).filter(User.email == form.email.data).first():
             return render_template(
                 "register.html",
                 title="Регистрация",
@@ -72,8 +67,8 @@ def reqister():
             name=form.name.data, email=form.email.data, about=form.about.data
         )
         user.set_password(form.password.data)
-        db_sess.add(user)
-        db_sess.commit()
+        db.add(user)
+        db.commit()
         return redirect("/login")
     return render_template("register.html", title="Регистрация", form=form)
 
@@ -88,15 +83,13 @@ def logout():
 @app.route("/places")
 @app.route("/places.html")
 def places():
-    db_sess = db_session.create_session()
-    places = db_sess.query(Place).all()
+    places = db.query(Place).all()
     return render_template("places.html", places=places, active="places")
 
 
 @app.route("/event/<int:id>")
 def event_info(id):
-    db_sess = db_session.create_session()
-    event = db_sess.query(Event).filter(Event.id == id).first()
+    event = db.query(Event).filter(Event.id == id).first()
     try:
         datetime = event.datetime.strftime("%H:%M %d.%m.%y")
     except:
@@ -106,11 +99,46 @@ def event_info(id):
 
 @app.route("/place/<int:id>")
 def place_info(id):
-    db_sess = db_session.create_session()
-    place = db_sess.query(Place).filter(Place.id == id).first()
+    place = db.query(Place).filter(Place.id == id).first()
+    db.commit()
     return render_template("place_info.html", place=place)
 
 
+@app.route("/buy/event/<int:id>")
+def buy_event(id):
+    if not current_user.is_authenticated:
+        return redirect("/login")
+    event = db.query(Event).filter(Event.id == id).first()
+    return render_template("buy.html", event=event)
+
+
+@app.route("/finish-order/event/<int:id>")
+def finish_order_event(id):
+    if current_user.is_authenticated:
+        order = Order(owner=current_user, event_id=id)
+        db.add(order)
+        db.commit()
+    return redirect("/")
+
+
 @app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({"error": "Not found"}), 404)
+def error404(error):
+    return make_response(
+        jsonify(
+            {"error": "Not Found", "advice": "Make sure there are no typos"}
+        ),
+        404,
+    )
+
+
+@app.errorhandler(500)
+def error500(error):
+    return make_response(
+        jsonify(
+            {
+                "error": "Internal Server Error",
+                "advice": "Try again or report the problem",
+            }
+        ),
+        500,
+    )

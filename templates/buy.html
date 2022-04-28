@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 class="text-center">Покупка билета</h2>
+  <h5 class="text-center text-muted">{{event.name or 'Ошибка, мероприятие недоступно'}}
+    в
+    {{event.place.name or 'место не указано'}}
+    {{event.datetime.strftime("%d.%m.%y %H:%M") if event.datetime else 'время не указано'}}</h5>
+  <div>
+    <h5 class="text-center text-muted">Описание мероприятия</h5>
+    <p>{{event.description or 'Описание отсутствует'}}</p>
+    <p>Требуемый возраст:
+      {{event.required_age or 'любой'}}</p>
+    <p>{{event.notes or ' '}}</p>
+  </div>
+  <div>
+    <p>Количество билетов:
+      <input type="number" value="1" min="1" max="100" id="count"/></p>
+    <input type="checkbox" id="agree"/>
+    <label for="agree" id="agree-label">Я ознакомился со всеми правилами мероприятия</label>
+  </div>
+  <button class="btn btn-outline-secondary" onclick="payment()">Следующий шаг</button>
+
+  <!-- The following script redirects user to the payment website if specified. -->
+  <script>
+    function payment() {
+      if (!document.getElementById("agree").checked) {
+        document
+          .getElementById("agree-label")
+          .style
+          .color = "red";
+        return;
+      }
+      if ("{{current_user.is_authenticated | safe}}" == "False") {
+        window
+          .location
+          .replace('/login');
+        return;
+      }
+      q = document
+        .getElementById("count")
+        .value;
+      if (1 <= q <= 100) {
+        if ("{{event.payment_link |safe}}" != "None") {
+          window
+            .open("https://{{event.payment_link | safe}}", "_blank")
+            .focus();
+          window
+            .location
+            .replace("/finish-order/event/{{event.id}}");
+        } else if (confirm('Вы уверены, что хотите зарегистрироваться на мероприятие ' + q + ' раза?')) {
+          window
+            .location
+            .replace("/finish-order/event/{{event.id}}");
+        }
+      }
+
+    }
+  </script>
+{% endblock %}>

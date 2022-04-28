@@ -18,6 +18,7 @@ class Event(SqlAlchemyBase, UserMixin, SerializerMixin):
     place_id = Column(Integer, ForeignKey("places.id"))
     required_age = Column(Integer, default=14)
     notes = Column(String, nullable=True)
+    payment_link = Column(String, nullable=True)
 
     place = orm.relationship("Place", back_populates="events")
     orders = orm.relationship("Order", back_populates="event")

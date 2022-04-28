@@ -25,7 +25,7 @@ class Order(SqlAlchemyBase, UserMixin, SerializerMixin):
     event_id = Column(Integer, ForeignKey("events.id"))
     is_fulfilled = Column(Boolean, default=False)
     event = orm.relationship("Event", back_populates="orders")
-    owner = orm.relationship("User", back_populates="orders")
+    owner = orm.relationship("User", back_populates="orders", lazy="subquery")
 
     def __repr__(self):
         return (

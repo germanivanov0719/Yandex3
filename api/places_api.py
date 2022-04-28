@@ -10,6 +10,7 @@ blueprint = flask.Blueprint("places_api", __name__, template_folder="templates")
 def get_places():
     db_sess = db_session.create_session()
     places = db_sess.query(Place).all()
+    db_sess.commit()
     return jsonify(
         {
             "places": [
@@ -34,6 +35,7 @@ def get_one_place(place_id):
     places = db_sess.query(Place).get(place_id)
     if not places:
         return jsonify({"error": "Not found"})
+    db_sess.commit()
     return jsonify(
         {
             "places": places.to_dict(
