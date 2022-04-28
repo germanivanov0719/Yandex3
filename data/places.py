@@ -1,7 +1,7 @@
 import datetime as dt
 
 from flask_login import UserMixin
-from sqlalchemy import Column, DateTime, Integer, String, orm
+from sqlalchemy import Column, DateTime, Integer, String, Boolean, orm
 from sqlalchemy_serializer import SerializerMixin
 
 from data.db_session import SqlAlchemyBase
@@ -15,6 +15,7 @@ class Place(SqlAlchemyBase, UserMixin, SerializerMixin):
     address = Column(String, nullable=True)
     about = Column(String, nullable=True)
     created_datetime = Column(DateTime, default=dt.datetime.now)
+    visibility = Column(Boolean, default=False)
 
     controlling_users = orm.relationship(
         "User", back_populates="controlled_place"

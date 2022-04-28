@@ -9,6 +9,8 @@ from data.orders import Order
 from data.places import Place
 from data.users import User
 from forms.edit_profile import EditProfileForm
+from forms.create_event import CreateEventForm
+from forms.create_place import CreatePlaceForm
 from forms.login import LoginForm
 from forms.register import RegisterForm
 
@@ -79,7 +81,7 @@ def logout():
 @app.route("/places")
 @app.route("/places.html")
 def places():
-    places = db.query(Place).all()
+    places = db.query(Place).filter(Place.visibility).all()
     return render_template("places.html", places=places, active="places")
 
 
@@ -150,6 +152,7 @@ def edit_profile():
         user.about = form.about.data if form.about.data != "" else user.about
         db.delete(old_user)
         db.add(user)
+        db.flush()
         db.commit()
         return redirect("/profile")
     return render_template(
@@ -209,6 +212,77 @@ def mark(id):
         db.commit()
         return redirect("/tickets")
     return redirect("/login")
+
+
+@app.route("/create-place", methods=["GET", "POST"])
+def create_place():
+    if not current_user.is_authenticated:
+        return redirect("/login")
+    form = CreatePlaceForm()
+    if form.validate_on_submit():
+        if current_user.controlled_place:
+            return render_template(
+                "create_place.html",
+                title="Создание места",
+                form=form,
+                message="Ваш аккаунт уже привязан к месту. Попробуйте создать новый.",
+            )
+        if db.query(Place).filter(Place.name == form.name.data).first():
+            return render_template(
+                "create_place.html",
+                title="Создание места",
+                form=form,
+                message="Место с таким названием уже есть",
+            )
+        p = Place(
+            name=form.name.data,
+            address=form.address.data,
+            about=form.about.data,
+        )
+        db.add(p)
+        current_user.controlled_place = p
+        db.flush()
+        db.commit()
+        return redirect("/")
+    return render_template(
+        "create_place.html", title="Создание места", form=form
+    )
+
+
+@app.route("/create-event", methods=["GET", "POST"])
+def create_event():
+    if not current_user.is_authenticated:
+        return redirect("/login")
+    form = CreateEventForm()
+    if form.validate_on_submit():
+        if not current_user.controlled_place:
+            return render_template(
+                "create_place.html",
+                title="Создание мероприятия",
+                form=form,
+                message="Ваш аккаунт не привязан к месту. Попробуйте создать его.",
+            )
+        if db.query(Event).filter(Event.name == form.name.data).first():
+            return render_template(
+                "create_place.Создание мероприятия места",
+                form=form,
+                message="Событие с таким названием уже есть",
+            )
+        e = Event(
+            name=form.name.data,
+            required_age=form.required_age.data,
+            datetime=form.datetime.data,
+            description=form.description.data,
+            notes=form.notes.data,
+        )
+        e.place = current_user.controlled_place
+        db.add(e)
+        db.flush()
+        db.commit()
+        return redirect("/")
+    return render_template(
+        "create_place.html", title="Создание мероприятия", form=form
+    )
 
 
 @app.errorhandler(404)

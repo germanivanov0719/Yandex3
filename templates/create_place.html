@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 class="text-center">Изменение пофиля</h2>
+  <p>Не все поля обязательны для заполнения.</p>
+  <p>В целях безопасности все места проходят проверку перед публикацией.</p>
+  <form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.hidden_tag() }}
+    {% if message %}
+      <p class="alert alert-danger" role="alert">{{message}}</p>
+    {% endif %}
+    <p>
+      {{ form.name.label }}<br>
+      {{ form.name(class="form-control", type="name") }}<br>
+      {% for error in form.name.errors %}
+        <p class="alert alert-danger" role="alert">
+          {{ error }}
+        </p>
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.address.label }}<br>
+      {{ form.address(class="form-control", type="address") }}<br>
+      {% for error in form.address.errors %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+      {% endfor %}
+    </p>
+    <p>
+      {{ form.about.label }}<br>
+      {{ form.about(class="form-control") }}<br>
+      {% for error in form.about.errors %}
+        <p class="alert alert-danger" role="alert">
+          {{ error }}
+        </p>
+      {% endfor %}
+    </p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+  </form>
+{% endblock %}>
