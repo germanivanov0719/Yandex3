@@ -104,15 +104,18 @@ def place_info(id):
     return render_template("place_info.html", place=place)
 
 
-@app.route("/profile/<int:id>")
-def profile_info(id):
-    user = db.query(User).filter(User.id == id).first()
-    return render_template("profile.html", user=user)
+@app.route("/profile")
+def profile_info():
+    if not current_user:
+        return redirect("/")
+    return render_template("profile.html", user=current_user)
 
 
-@app.route("/profile/edit/<int:id>", methods=["POST"])
-def edit_profile(id):
-    user = db.query(User).filter(User.id == id).first()
+@app.route("/profile/edit", methods=["POST"])
+def edit_profile():
+    if not current_user:
+        return redirect("/")
+    user = current_user
     user.name = request.form.get("name")
     user.about = request.form.get("about")
     user.hashed_password = request.form.get("new_password")
