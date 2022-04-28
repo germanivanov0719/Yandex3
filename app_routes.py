@@ -1,18 +1,12 @@
-from __main__ import app, login_manager, db, load_user  # pylint: disable=E0611
-from flask import redirect, render_template, make_response, jsonify, request
-from flask_login import (
-    LoginManager,
-    current_user,
-    login_required,
-    login_user,
-    logout_user,
-)
+from __main__ import app, db  # pylint: disable=E0611
+from flask import redirect, render_template, request
+from flask_login import current_user, login_required, login_user, logout_user
+from werkzeug.exceptions import HTTPException
 
-# from data import db_session
-from data.users import User
+from data.events import Event
 from data.orders import Order
 from data.places import Place
-from data.events import Event
+from data.users import User
 from forms.login import LoginForm
 from forms.register import RegisterForm
 
@@ -145,23 +139,13 @@ def finish_order_event(id):
 
 
 @app.errorhandler(404)
-def error404(error):
-    return make_response(
-        jsonify(
-            {"error": "Not Found", "advice": "Make sure there are no typos"}
-        ),
-        404,
-    )
+def error404(e):
+    return render_template("error404.html"), 404
 
 
-@app.errorhandler(500)
-def error500(error):
-    return make_response(
-        jsonify(
-            {
-                "error": "Internal Server Error",
-                "advice": "Try again or report the problem",
-            }
-        ),
-        500,
-    )
+@app.errorhandler(Exception)
+def handle_unknown_error(e):
+    code = 500
+    if isinstance(e, HTTPException):
+        code = e.code
+    return render_template("other_error.html", code=code, error=str(e)), e.code

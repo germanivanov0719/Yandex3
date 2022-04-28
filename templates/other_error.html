@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 class="text-center">Ошибка
+    {{code}}</h2>
+  <h5 class="text-center text-muted">Произошла неизвестная ошибка</h5>
+  <p>Попробуйте перезагрузить страницу или вернитесь
+    <a href='/'>на главную</a>. Если ошибка остается, Вы можете сообщить о ней.
+  </p>
+  <h5 class="text-center text-muted">Информация для разработчиков</h5>
+  <div>
+    <p class="d">Код ошибки:
+      <p class="text-secondary">{{code}}</p>
+    </p>
+    <p>Текст ошибки:
+      <p class="text-secondary">{{error}}</p>
+    </p>
+  </div>
+{% endblock %}>
