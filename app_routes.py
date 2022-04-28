@@ -257,14 +257,14 @@ def create_event():
     if form.validate_on_submit():
         if not current_user.controlled_place:
             return render_template(
-                "create_place.html",
+                "create_event.html",
                 title="Создание мероприятия",
                 form=form,
                 message="Ваш аккаунт не привязан к месту. Попробуйте создать его.",
             )
         if db.query(Event).filter(Event.name == form.name.data).first():
             return render_template(
-                "create_place.Создание мероприятия места",
+                "create_event.html",
                 form=form,
                 message="Событие с таким названием уже есть",
             )
@@ -281,7 +281,7 @@ def create_event():
         db.commit()
         return redirect("/")
     return render_template(
-        "create_place.html", title="Создание мероприятия", form=form
+        "create_event.html", title="Создание мероприятия", form=form
     )
 
 
