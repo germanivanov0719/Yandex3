@@ -42,15 +42,15 @@
       if (1 <= q <= 100) {
         if ("{{event.payment_link |safe}}" != "None") {
           window
-            .open("https://{{event.payment_link | safe}}", "_blank")
+            .open("https://{{event.payment_link | safe}}/" + q, "_blank")
             .focus();
           window
             .location
-            .replace("/finish-order/event/{{event.id}}");
-        } else if (confirm('Вы уверены, что хотите зарегистрироваться на мероприятие ' + q + ' раза?')) {
+            .replace("/finish-order/event/{{event.id}}/" + q);
+        } else if (confirm('Вы уверены, что хотите зарегистрироваться на мероприятие ' + q + ' раз(а)?')) {
           window
             .location
-            .replace("/finish-order/event/{{event.id}}");
+            .replace("/finish-order/event/{{event.id}}/" + q);
         }
       }
 

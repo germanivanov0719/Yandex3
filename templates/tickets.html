@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2 class="text-center">Мои билеты</h2>
+  {% if current_user.is_authenticated %}
+    <h5 class="text-center">Доступные</h5>
+    <div class="container-fluid">
+      <div class="row">
+        {% for ticket in unused %}
+          <div class="col my-2">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">#{{ticket.id}}</h5>
+                <p class="card-link card-subtitle text-muted s" style="max-width: 30ch">{{ticket.event.name}}</p>
+                <p class="card-subtitle text-muted s" style="max-width: 30ch">{{ticket.event.place.name or 'Место не указано'}}</p>
+                <p class="card-subtitle text-muted s" style="max-width: 30ch">{{ticket.event.datetime.strftime("%d.%m.%y %H:%M") if ticket.event.datetime else 'Время не указано'}}</p>
+                <p class="s text-truncate" style="max-width: 30ch">{{ticket.event.description or '—'}}</p>
+                <p class="s text-truncate" style="max-width: 30ch">{{ticket.notes or '—'}}</p>
+                {% if ticket.is_declined %}
+                  <p class="s text-truncate text-danger">Отказано</p>
+                {% elif not ticket.is_fulfilled %}
+                  <p class="s text-truncate text-warning">В обработке</p>
+                {% endif %}
+              </div>
+              <div class="card-body">
+                <a class="btn btn-outline-primary" href="/event/{{ticket.event.id}}">Информация</a>
+                <a class="btn btn-outline-secondary" href="/tickets/mark/{{ticket.id}}">Пометить как использованный</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <h5 class="text-center">Использованные</h5>
+    <div class="container-fluid">
+      <div class="row">
+        {% for ticket in used %}
+          <div class="col my-2">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">#{{ticket.id}}</h5>
+                <p class="card-link card-subtitle text-muted s" style="max-width: 30ch">{{ticket.event.name}}</p>
+                <p class="card-subtitle text-muted s" style="max-width: 30ch">{{ticket.event.place.name or 'Место не указано'}}</p>
+                <p class="card-subtitle text-muted s" style="max-width: 30ch">{{ticket.event.datetime.strftime("%d.%m.%y %H:%M") if ticket.event.datetime else 'Время не указано'}}</p>
+                <p class="s text-truncate" style="max-width: 30ch">{{ticket.event.description or '—'}}</p>
+                {% if ticket.is_declined %}
+                  <p class="s text-truncate text-danger">Отказано</p>
+                {% elif not ticket.is_fulfilled %}
+                  <p class="s text-truncate text-warning">В обработке</p>
+                {% endif %}
+              </div>
+              <div class="card-body">
+                <a class="btn btn-outline-primary" href="/event/{{ticket.event.id}}">Информация</a>
+                <a class="btn btn-outline-secondary" href="/tickets/mark/{{ticket.id}}">Пометить как неиспользованный</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -160,13 +160,50 @@ def buy_event(id):
     return render_template("buy.html", event=event)
 
 
-@app.route("/finish-order/event/<int:id>")
-def finish_order_event(id):
+@app.route("/finish-order/event/<int:id>/<int:q>")
+def finish_order_event(id, q):
     if current_user.is_authenticated:
-        order = Order(owner=current_user, event_id=id)
-        db.add(order)
+        for i in range(q):
+            order = Order(owner=current_user, event_id=id)
+            db.add(order)
         db.commit()
     return redirect("/")
+
+
+@app.route("/tickets")
+def tickets():
+    if current_user.is_authenticated:
+        ord = db.query(Order).filter(Order.owner == current_user).all()
+        unused = sorted(
+            [t for t in ord if not t.is_used],
+            key=lambda t: t.created_datetime,
+            reverse=True,
+        )
+        used = sorted(
+            [t for t in ord if t.is_used],
+            key=lambda t: t.created_datetime,
+            reverse=True,
+        )
+        print(*unused, "\n", *used)
+        return render_template(
+            "tickets.html", active="tickets", used=used, unused=unused
+        )
+    return redirect("/login")
+
+
+@app.route("/tickets/mark/<int:id>")
+def mark(id):
+    if current_user.is_authenticated:
+        t = (
+            db.query(Order)
+            .filter(Order.owner == current_user)
+            .filter(Order.id == id)
+            .first()
+        )
+        t.is_used = not t.is_used
+        db.commit()
+        return redirect("/tickets")
+    return redirect("/login")
 
 
 @app.errorhandler(404)
@@ -176,7 +213,13 @@ def error404(e):
 
 @app.errorhandler(Exception)
 def handle_unknown_error(e):
-    code = 500
     if isinstance(e, HTTPException):
-        code = e.code
-    return render_template("other_error.html", code=code, error=str(e)), e.code
+        return (
+            render_template("other_error.html", e=e.code, error=str(e)),
+            e.code,
+        )
+    else:
+        return (
+            render_template("other_error.html", e=str(type(e)), error=str(e)),
+            500,
+        )
