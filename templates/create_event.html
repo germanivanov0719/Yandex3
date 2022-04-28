@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-  <h2 class="text-center">Изменение пофиля</h2>
+  <h2 class="text-center">Создание события</h2>
   <p>Не все поля обязательны для заполнения.</p>
-  <p>В целях безопасности все места проходят проверку перед публикацией.</p>
   <form action="" method="post">
     {{ form.hidden_tag() }}
     {{ form.hidden_tag() }}
@@ -20,7 +19,7 @@
     </p>
     <p>
       {{ form.datetime.label }}<br>
-      {{ form.datetime(class="form-control", type="datetime") }}<br>
+      {{ form.datetime(class="form-control", placeholder="Формат \"ГГГГ-ММ-ДД чч:мм:сс\"") }}<br>
       {% for error in form.datetime.errors %}
         <div class="alert alert-danger" role="alert">
           {{ error }}
@@ -29,7 +28,7 @@
     </p>
     <p>
       {{ form.required_age.label }}<br>
-      {{ form.required_age(class="form-control") }}<br>
+      {{ form.required_age(class="form-control", value="14") }}<br>
       {% for error in form.required_age.errors %}
         <p class="alert alert-danger" role="alert">
           {{ error }}
