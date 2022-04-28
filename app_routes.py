@@ -102,11 +102,12 @@ def place_info(id):
     place = db.query(Place).filter(Place.id == id).first()
     if place is None:
         abort(404)
-    orders = db.query(Order).filter().all()
+    orders = list(db.query(Order).filter().all())
+    ord2 = []
     for o in orders:
-        if o.event.place != place or o.is_fulfilled or o.is_declined:
-            del o
-    return render_template("place_info.html", place=place, orders=orders)
+        if not ((o.event.place != place) or o.is_fulfilled or o.is_declined):
+            ord2.append(o)
+    return render_template("place_info.html", place=place, orders=ord2)
 
 
 @app.route("/profile")
@@ -320,15 +321,15 @@ def decline(id):
     return redirect("/place/" + str(o.event.place.id))
 
 
-# @app.errorhandler(Exception)
-# def handle_unknown_error(e):
-#     if isinstance(e, HTTPException):
-#         return (
-#             render_template("other_error.html", e=e.code, error=str(e)),
-#             e.code,
-#         )
-#     else:
-#         return (
-#             render_template("other_error.html", e=str(type(e)), error=str(e)),
-#             500,
-#         )
+@app.errorhandler(Exception)
+def handle_unknown_error(e):
+    if isinstance(e, HTTPException):
+        return (
+            render_template("other_error.html", e=e.code, error=str(e)),
+            e.code,
+        )
+    else:
+        return (
+            render_template("other_error.html", e=str(type(e)), error=str(e)),
+            500,
+        )
