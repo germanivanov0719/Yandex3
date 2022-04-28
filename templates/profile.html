@@ -1,4 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
   <h2 class="text-center">Профиль</h2>
+  <form>
+    <fieldset disabled="disabled">
+      <div class="form-group">
+        <label for="disabledTextInput">Имя</label>
+        <input type="text" id="name" class="form-control" placeholder={{user.name} }="}">
+      </div>
+      <div class="form-group">
+        <label for="disabledTextInput">Почта</label>
+        <input type="text" id="email" class="form-control" placeholder={{user.email} }="}">
+      </div>
+      <div class="form-group">
+        <label for="disabledTextInput">О себе</label>
+        <input type="text" id="info" class="form-control" placeholder={{user.about} }="}">
+      </div>
+      <div class="form-group">
+        <label for="disabledTextInput">Профиль создан</label>
+        <input type="text" id="datetime" class="form-control" placeholder={{user.created_datetime} }="}">
+      </div>
+      <button type="submit" class="btn btn-primary mb-2">Редактировать профиль</button>
+    </fieldset>
+  </form>
 {% endblock %}>
+<!--loginova032@gmail.com-->
