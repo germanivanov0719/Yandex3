@@ -137,7 +137,9 @@ def edit_profile(id):
         db.add(user)
         db.commit()
         return redirect("/profile")
-    return render_template("edit_profile.html", title="Изменение профиля", form=form)
+    return render_template(
+        "edit_profile.html", title="Изменение профиля", form=form
+    )
     # if not current_user:
     #     return redirect("/")
     # user = current_user
