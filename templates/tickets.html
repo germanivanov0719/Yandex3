@@ -19,6 +19,8 @@
                   <p class="s text-truncate text-danger">Отказано</p>
                 {% elif not ticket.is_fulfilled %}
                   <p class="s text-truncate text-warning">В обработке</p>
+                {% else %}
+                  <p class="s text-truncate text-success">Доступен</p>
                 {% endif %}
               </div>
               <div class="card-body">
@@ -46,6 +48,8 @@
                   <p class="s text-truncate text-danger">Отказано</p>
                 {% elif not ticket.is_fulfilled %}
                   <p class="s text-truncate text-warning">В обработке</p>
+                {% else %}
+                  <p class="s text-truncate text-success">Доступен</p>
                 {% endif %}
               </div>
               <div class="card-body">
