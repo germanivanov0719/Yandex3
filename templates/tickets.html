@@ -2,7 +2,7 @@
 {% block content %}
   <h2 class="text-center">Мои билеты</h2>
   {% if current_user.is_authenticated %}
-    <h5 class="text-center">Доступные</h5>
+    <h5 class="text-center text-muted">Доступные</h5>
     <div class="container-fluid">
       <div class="row">
         {% for ticket in unused %}
@@ -30,7 +30,7 @@
         {% endfor %}
       </div>
     </div>
-    <h5 class="text-center">Использованные</h5>
+    <h5 class="text-center text-muted">Использованные</h5>
     <div class="container-fluid">
       <div class="row">
         {% for ticket in used %}
