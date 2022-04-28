@@ -19,7 +19,10 @@
             <label for="disabledTextInput">Профиль создан</label>
             <input type="text" id="datetime" class="form-control" placeholder={{user.created_datetime}}>
         </div>
-        <button type="submit" class="btn btn-primary" href="/profile/edit">Редактировать профиль</button>
+<!--        <button type="submit" class="btn btn-primary" href="/profile/edit">Редактировать профиль</button>-->
+        <div class="card-body">
+              <a class="btn btn-outline-primary" href="/edit">Изменение профиля</a>
+        </div>
     </fieldset>
 </form>
 {% endblock %}>

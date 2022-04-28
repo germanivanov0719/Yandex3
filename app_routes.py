@@ -7,6 +7,7 @@ from data.events import Event
 from data.orders import Order
 from data.places import Place
 from data.users import User
+from forms.edit_profile import EditProfileForm
 from forms.login import LoginForm
 from forms.register import RegisterForm
 
@@ -105,19 +106,49 @@ def profile_info():
     return render_template("profile.html", user=current_user)
 
 
-@app.route("/profile/edit", methods=["POST", "GET"])
-def edit_profile():
+@app.route("/edit/<int:id>", methods=["POST", "GET"])
+def edit_profile(id):
+    form = EditProfileForm()
     if not current_user:
         return redirect("/")
-    user = current_user
-    user.name = request.form.get("name")
-    user.about = request.form.get("about")
-    user.hashed_password = request.form.get("new_pass")
-    user.email = request.form.get("email")
-    if user.email in db.query(User.email).all():
-        # error warning
-        pass
-    db.commit()
+    user = db.query(User).filter(User.id == id).first()
+    old_user = user
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            return render_template(
+                "edit_profile.html",
+                title="Изменение профиля",
+                form=form,
+                message="Пароли не совпадают",
+            )
+            # if not(db.query(User).filter(current_user.email == form.email.data).first()):
+        if db.query(User).filter(User.email == form.email.data).first():
+            return render_template(
+                "register.html",
+                title="Изменение профиля",
+                form=form,
+                message="Такой пользователь уже есть",
+            )
+        user.name = form.name.data
+        user.email = form.email.data
+        user.about = form.about.data
+        user.hashed_password = form.password.data
+        db.delete(old_user)
+        db.add(user)
+        db.commit()
+        return redirect("/profile")
+    return render_template("edit_profile.html", title="Изменение профиля", form=form)
+    # if not current_user:
+    #     return redirect("/")
+    # user = current_user
+    # user.name = request.form.get("name")
+    # user.about = request.form.get("about")
+    # user.hashed_password = request.form.get("new_pass")
+    # user.email = request.form.get("email")
+    # if user.email in db.query(User.email).all():
+    #     # error warning
+    #     pass
+    # db.commit()
     # return render_template("profile_edit.html", user=user)
 
 
