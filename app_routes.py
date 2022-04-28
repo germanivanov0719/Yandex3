@@ -105,14 +105,14 @@ def profile_info():
     return render_template("profile.html", user=current_user)
 
 
-@app.route("/profile/edit", methods=["POST"])
+@app.route("/profile/edit", methods=["POST", "GET"])
 def edit_profile():
     if not current_user:
         return redirect("/")
     user = current_user
     user.name = request.form.get("name")
     user.about = request.form.get("about")
-    user.hashed_password = request.form.get("new_password")
+    user.hashed_password = request.form.get("new_pass")
     user.email = request.form.get("email")
     if user.email in db.query(User.email).all():
         # error warning
