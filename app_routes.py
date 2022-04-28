@@ -1,6 +1,6 @@
 from __main__ import app, db
 from copy import copy  # pylint: disable=E0611
-from flask import redirect, render_template, request
+from flask import redirect, render_template, abort
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.exceptions import HTTPException
 
@@ -88,6 +88,8 @@ def places():
 @app.route("/event/<int:id>")
 def event_info(id):
     event = db.query(Event).filter(Event.id == id).first()
+    if event is None:
+        abort(404)
     try:
         datetime = event.datetime.strftime("%H:%M %d.%m.%y")
     except:
@@ -98,8 +100,14 @@ def event_info(id):
 @app.route("/place/<int:id>")
 def place_info(id):
     place = db.query(Place).filter(Place.id == id).first()
-    db.commit()
-    return render_template("place_info.html", place=place)
+    if place is None:
+        abort(404)
+    orders = db.query(Order).filter().all()
+    for o in orders:
+        if o.event.place != place:
+            del o
+    print(*orders)
+    return render_template("place_info.html", place=place, orders=orders)
 
 
 @app.route("/profile")
@@ -165,13 +173,17 @@ def buy_event(id):
     if not current_user.is_authenticated:
         return redirect("/login")
     event = db.query(Event).filter(Event.id == id).first()
+    if event is None:
+        abort(404)
     return render_template("buy.html", event=event)
 
 
 @app.route("/finish-order/event/<int:id>/<int:q>")
 def finish_order_event(id, q):
+    if db.query(Event).filter(Event.id == id).first() is None:
+        abort(504)
     if current_user.is_authenticated:
-        for i in range(q):
+        for _ in range(q):
             order = Order(owner=current_user, event_id=id)
             db.add(order)
         db.commit()
