@@ -104,9 +104,8 @@ def place_info(id):
         abort(404)
     orders = db.query(Order).filter().all()
     for o in orders:
-        if o.event.place != place:
+        if o.event.place != place or o.is_fulfilled or o.is_declined:
             del o
-    print(*orders)
     return render_template("place_info.html", place=place, orders=orders)
 
 
@@ -297,20 +296,39 @@ def create_event():
     )
 
 
-@app.errorhandler(404)
-def error404(e):
-    return render_template("error404.html"), 404
+@app.route("/accept/<int:id>")
+def accept(id):
+    o = db.query(Order).filter(Order.id == id).first()
+    if o is None:
+        abort(404)
+    o.is_fulfilled = True
+    o.is_declined = False
+    db.flush()
+    db.commit()
+    return redirect("/place/" + str(o.event.place.id))
 
 
-@app.errorhandler(Exception)
-def handle_unknown_error(e):
-    if isinstance(e, HTTPException):
-        return (
-            render_template("other_error.html", e=e.code, error=str(e)),
-            e.code,
-        )
-    else:
-        return (
-            render_template("other_error.html", e=str(type(e)), error=str(e)),
-            500,
-        )
+@app.route("/decline/<int:id>")
+def decline(id):
+    o = db.query(Order).filter(Order.id == id).first()
+    if o is None:
+        abort(404)
+    o.is_fulfilled = False
+    o.is_declined = True
+    db.flush()
+    db.commit()
+    return redirect("/place/" + str(o.event.place.id))
+
+
+# @app.errorhandler(Exception)
+# def handle_unknown_error(e):
+#     if isinstance(e, HTTPException):
+#         return (
+#             render_template("other_error.html", e=e.code, error=str(e)),
+#             e.code,
+#         )
+#     else:
+#         return (
+#             render_template("other_error.html", e=str(type(e)), error=str(e)),
+#             500,
+#         )
