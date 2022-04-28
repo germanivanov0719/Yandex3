@@ -1,4 +1,4 @@
-from __main__ import *  # pylint: disable=E0611
+from __main__ import app, login_manager, db, load_user  # pylint: disable=E0611
 from flask import redirect, render_template, make_response, jsonify, request
 from flask_login import (
     LoginManager,
@@ -106,24 +106,21 @@ def place_info(id):
 
 @app.route("/profile/<int:id>")
 def profile_info(id):
-    db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.id == id).first()
-    # return render_template("profile.html", user=user)
-    return render_template("profile.html")
+    user = db.query(User).filter(User.id == id).first()
+    return render_template("profile.html", user=user)
 
 
 @app.route("/profile/edit/<int:id>", methods=["POST"])
 def edit_profile(id):
-    db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.id == id).first()
+    user = db.query(User).filter(User.id == id).first()
     user.name = request.form.get("name")
     user.about = request.form.get("about")
     user.hashed_password = request.form.get("new_password")
     user.email = request.form.get("email")
-    if user.email in db_sess.query(User.email).all():
+    if user.email in db.query(User.email).all():
         # error warning
         pass
-    db_sess.commit()
+    db.commit()
     # return render_template("profile_edit.html", user=user)
 
 
